@@ -1,0 +1,20 @@
+to strip :sent
+if emptyp :sent [output []]
+output se (strip.word first :sent) (strip bf :sent)
+end
+
+to strip.word :word
+; select only the letters from a word
+if emptyp :word [output "]
+if letterp first :word [output word (first :word) (strip.word bf :word)]
+output (strip.word bf :word)
+end
+
+to letterp :char
+output or inrangep (ascii :char) (ascii "A) (ascii "Z) ~
+          inrangep (ascii :char) (ascii "a) (ascii "z)
+end
+
+to inrangep :this :low :high
+output and :this>:low-1 :this<:high+1
+end

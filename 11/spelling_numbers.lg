@@ -1,0 +1,47 @@
+; ? print number.name 5513345
+; five million five hundred thirteen thousand three hundred forty five
+; ? print number.name (fact 20)
+; two quintillion four hundred thirty two quadrillion nine hundred two
+; trillion eight billion one hundred seventy six million six hundred
+; forty thousand
+
+make "decimal.position [hundred thousand million billion trillion quadrillion quintillion sextillion septillion octillion nonillion decillion]
+
+make "digits [zero one two three four five six seven eight nine]
+make "teens [ten eleven twelve thirteen fourteen fifteen sixteen seventeen eighteen nineteen]
+make "tens [twenty thirty forty fifty sixty seventy eighty ninety]
+
+to digit.to.word :digit
+output item 1+:digit :digits
+end
+
+to teen.to.word :number
+if equalp 1 first :number [output item last 1+:number :teens]
+output word item (first :number)-1 :tens
+end
+
+
+to high.number.to.word :number
+end
+
+to number.name :number
+if equalp 1 count :number [output digit.to.word :number]
+if equalp 2 count :number [output teen.to.word :number]
+output word  word (number.name first :number) (item ((count :number)-2) :decimal.position) number.name bf :number
+end
+
+ct
+show number.name 3
+show number.name 17 
+show number.name 42
+show number.name 143 
+
+
+to my.power :base :exponent
+output cascade :exponent [:base * ? ] 1
+end
+
+to fact :n
+if :n=0 [output 1]
+output :n * fact :n-1
+end

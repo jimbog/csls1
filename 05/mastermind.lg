@@ -1,0 +1,197 @@
+; Mastermind by Jimmy Garzon based on Computer Science Logo Style V1.
+
+; The program runs as follows:
+; ? master "roygbiv 4 "false
+; You have 1 correct-position matches
+; and 2 incorrect-position matches.
+
+; initialization
+make "number.of.guesses 0
+
+to master :colors :qty :allow.repeat
+; create secret
+if equalp :number.of.guesses 0~
+[ifelse :allow.repeat ~
+  [make "secret choose.dup :qty :colors] ~
+  [make "secret choose.nodup :qty :colors]]
+; print se [secret is ] :secret
+
+; user interface
+print [What's your guess?]
+make "guess readword
+
+make "number.of.guesses 1+:number.of.guesses
+
+if not equalp count :guess :qty~
+ [print (se [You must guess exactly] :qty [colors.]) ~
+  master :colors :qty :allow.repeat]
+
+; print (se [you have tried] :number.of.guesses [times])
+
+; check guess
+make "exact.matches exact :secret :guess 
+make "inexact.matches inexact :secret :guess 
+
+ifelse (equalp :exact.matches :qty)~
+  [print (se [you won in] :number.of.guesses [guesses]) stop]~
+  [print (se [You have] :exact.matches [correct-position matches]~
+   [and] :inexact.matches [incorrect-position matches.]) ~
+   master :colors :qty :allow.repeat]
+
+end
+
+to choose.dup :qty :colors
+output cascade :qty [word ? pick :colors] "
+end
+
+; old version of choose.nodup
+; to choose.nodup  :qty :colors
+; local "selection
+; make "selection "
+; repeat :qty ~
+;  [make "selection word :selection pick :colors ~
+;   make "colors filter [not equalp last :selection ?] :colors]
+; output :selection
+; end
+
+to choose.nodup  :qty :colors
+output (cascade :qty    ~
+         [word (first  ?2) ?1] "  ~
+	       [rotate bf ?2] :colors)
+end
+
+; match counting procedures
+
+to anymatch :guess :secret
+output reduce "sum map [min howmany ? :secret  howmany ? :guess] :colors
+end
+
+; helper procedure to calculate the minimum of two numbers
+to min :a :b
+ifelse :a < :b [output :a] [output :b]
+end
+
+
+to exact :guess :secret
+local "total
+make "total 0
+(foreach :guess :secret [if equalp ?1 ?2 [make "total :total+1] ])
+output :total
+end
+
+to inexact :guess :secret
+output (anymatch :guess :secret)-(exact :guess :secret)
+end
+
+to howmany :letter :word
+output count filter [equalp :letter ?] :word
+end
+
+to rotate :word
+output cascade random count :word [word bf ? first ?] :word
+end
+
+; Procedures for the intro
+to say :word
+for [row 1 7] [foreach :word [sayrow :row ?] print[]]
+end
+
+to sayrow :row :letter
+type item :row thing :letter
+type "|  |
+end
+
+Make "M [
+|*   *|  ~
+|** **|  ~
+|* * *|  ~
+|*   *|  ~
+|*   *|  ~
+|*   *|  ~
+|*   *|]
+
+Make "A [
+|  *  |  ~
+| * * |  ~
+|*   *|  ~
+|* * *|  ~
+|*   *|  ~
+|*   *| ~
+|*   *|]
+
+Make "S [
+|*****| ~
+|*    | ~
+|*    | ~
+|*****| ~
+|    *| ~
+|    *| ~
+|*****|]
+
+Make "T [
+|*****| ~
+|  *  | ~
+|  *  | ~
+|  *  | ~
+|  *  | ~
+|  *  | ~
+|  *  |]
+
+
+Make "E [
+|*****| ~
+|*    | ~
+|*    | ~
+|*****| ~
+|*    | ~
+|*    | ~
+|*****|]
+
+Make "R [
+|* *  | ~
+|*   *| ~
+|*   *| ~
+|* *  | ~
+|*   *| ~
+|*   *| ~
+|*   *|]
+
+Make "I [
+|*****| ~
+|  *  | ~
+|  *  | ~
+|  *  | ~
+|  *  | ~
+|  *  | ~
+|*****|]
+
+Make "N [
+|*   *|  ~
+|**  *|  ~
+|* * *|  ~
+|* * *|  ~
+|*  **|  ~
+|*   *|  ~
+|*   *|]
+
+  
+Make "D [
+|**** |  ~
+|*   *|  ~
+|*   *|  ~
+|*   *|  ~
+|*   *|  ~
+|*   *| ~
+|**** |]
+
+to mastermind.intro :word
+; if equalp count :word 0 [say "MASTERMIND stop]
+ct
+say :word
+; wait 50
+ct
+; mastermind.intro bl rotate :word
+end
+
+mastermind.intro "MASTERMIND
+master "roygbiv 4 "false
